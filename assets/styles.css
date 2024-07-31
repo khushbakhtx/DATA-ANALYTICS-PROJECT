@@ -109,6 +109,9 @@ button:hover {
     position: relative;
     z-index: 1; /* Ensure the plot is above the border */
 }
+.plotly-graphx {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.973)
+}
 .box {
     position: relative;
     width: 100%;

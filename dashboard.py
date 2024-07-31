@@ -142,10 +142,10 @@ app.layout = dbc.Container(
     'align-items': 'center'
 }, children=[
         html.Div(style={'grid-column': '1 / 2', 'grid-row': '1 / 2'}
-                 ,  children=[
+                 , className="plotly-graphx",  children=[
         dcc.Graph(figure=fig_scatter, style={'border-radius': 15})
     ]),
-    html.Div(style={'grid-column': '2 / 3', 'grid-row': '1 / 2'},
+    html.Div(style={'grid-column': '2 / 3', 'grid-row': '1 / 2'}, className="plotly-graphx",
               children=[
         dcc.Graph(figure=fig_bar)
     ]),
@@ -158,23 +158,25 @@ app.layout = dbc.Container(
     ])]),
     html.Div(style={'grid-column': '1 / 3', 'grid-row': '2 / 3'}, children=[
         dcc.Graph(figure=fig_line),
-    ]),
+    ], className="plotly-graphx"),
     html.Div(style={'grid-column': '1 / 2', 'grid-row': '3 / 4'}, children=[
         dcc.Graph(figure=fig_pie)
-    ]),
+    ], className="plotly-graphx"),
     html.Div(style={'grid-column': '2 / 3', 'grid-row': '3 / 4'}, children=[
         dcc.Graph(figure=fig_3d)
-    ]),
+    ], className="plotly-graphx"),
     html.Div(style={'grid-column': '3 / 4', 'grid-row': '3 / 4'}, children=[
         dcc.Graph(figure=fig_sunburst)
-    ]),
+    ], className="plotly-graphx"),
     html.Div(style={'grid-column': '2 / 3', 'grid-row': '4 / 5'}, className='footer', children=[
         html.P("Built by AI Enthusiast", style={'margin': '0'}),
         html.P("Khushbakht Shoymardonov", style={'margin-bottom': '20'}),
         html.P("_______________________")
     ])
 ]),
-], fluid=True, style={'display': 'inline-block', 'margin-top':'5px'})
+], fluid=True, style={
+'background-image': 'url("./assets/world-map_2.png")', 'background-attachment': 'fixed',
+'background-repeat': 'no-repeat','display': 'inline-block', 'margin-top':'5px'})
 
 
 

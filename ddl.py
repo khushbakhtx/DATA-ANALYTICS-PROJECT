@@ -4,8 +4,14 @@ from connector import set_connection
 
 with open('./queries/ddl.sql') as f:
     query=f.read()
+# with open('./queries/ddl.sql') as f:
+#     ddl_queries = f.read().split(';')
 
 with set_connection('duckdb') as duck:
+    # for query in ddl_queries:
+    #     query = query.strip()
+    #     if query:
+    #         duck.execute(query)
     duck.execute(query),
     df_product = pd.read_csv('./source/product.csv')
     df_sales = pd.read_csv('./source/sales.csv')
@@ -32,6 +38,9 @@ with set_connection('duckdb') as duck:
         'UnitPrice': 'unit_price',
         'Quantity': 'quantity'
     }, inplace=True)
+    # df_product.to_sql('product', duck, if_exists='append', index=False)
+    # df_store.to_sql('store', duck, if_exists='append', index=False)
+    # df_sales.to_sql('sales', duck, if_exists='append', index=False)
     duck.query("""
         insert into product
         select *

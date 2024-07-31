@@ -1,0 +1,267 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+@font-face {
+    font-family: 'OpenX';
+    src: url('./Zain-Light.ttf');
+    font-weight: 100;
+    font-style: normal;
+    font-size: large;
+  }
+body {
+    display: flex;
+    justify-content: center;
+    font-family: 'OpenX', sans-serif;
+    align-items: center;
+    min-height: 100vh;
+    background: #25252b;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+    background-color: #2d2d39; 
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); 
+}
+
+h1 {
+    color: #4a4a4a; 
+    text-align: center;
+    margin-top: 22px;
+    margin-bottom: 25px;
+    font-size: 2.5em;
+}
+
+.input-container {
+    border: .1em solid #2d2d39;
+    background-color: #2d2d39;
+    color: #fff;
+    padding: 15px;
+    border-radius: 24px;
+    box-shadow: 0 4px 20px blueviolet;
+    transition: transform 0.3s;
+}
+.input-container:hover {
+    border: .1em solid blueviolet;
+    transition: .6s;
+}
+
+label {
+    font-family: 'Poppins', 'Trebuchet MS', sans-serif;
+    font-weight: thin;
+    color: #fff; 
+}
+
+input {
+    margin: 5px 0;
+    padding: 10px;
+    border: 1px solid #cccccc; 
+    border-radius: 10px;
+    width: calc(100% - 22px);
+    background-color: #ffffff; 
+    color: #333333; 
+}
+
+button {
+    margin-top: 10px;
+    background-color: #4a4a4a; 
+    color: #ffffff; 
+    border: none;
+    padding: 10px 15px;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+button:hover {
+    background-color: #333333; 
+    transform: scale(1.05);
+}
+
+.prediction-output {
+    font-size: 16px;
+    font-weight: normal;
+    text-align: center;
+    color: #fff; 
+    margin-top: 15px;
+}
+
+.footer {
+    text-align: center;
+    margin-top: 20px;
+    color: #777;
+}
+
+.graph-container {
+    position: absolute;
+    margin-top: 20px; /* Space between graphs */
+}
+
+.plotly-graph {
+    padding: 10px;
+    width: 100%;
+    height: 100%;
+    border-radius: 15px; /* Match the border radius of the graph */
+    position: relative;
+    z-index: 1; /* Ensure the plot is above the border */
+}
+.box {
+    position: relative;
+    width: 100%;
+    height: 500;
+    background: repeating-conic-gradient(from var(--a), #ff2770 0%, #ff2770 5%, transparent 5%, transparent 40%, #ff2770 50%);
+    animation: animate 10s linear infinite;
+    border-radius: 15px;
+}
+
+@property --a {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 0deg;
+}
+
+@keyframes animate {
+    0% {
+        --a: 0deg;
+    }
+    100% {
+        --a: 360deg;
+    }
+}
+
+.box::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: repeating-conic-gradient(from var(--a), #45f3ff 0%, #45f3ff 5%, transparent 5%, transparent 40%, #45f3ff 50%);
+    animation: animate 10s linear infinite;
+    animation-delay: -2s;
+    border-radius: 15px;
+}
+
+.box::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    background: #1f1f1f;
+    border-radius: 15px;
+    border: 8px solid #25252b;
+}
+
+.chat-container {
+    position: relative;
+    width: 100%;
+    margin-top: 0px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll; /* Allow vertical scrolling */
+    height: 70%; /* Set a maximum height for the chat log */
+    border: 1px solid #3c3c3c;
+    border-radius: 15px;
+    background-color: #1f1f1f; /* Darker background color */
+    padding: 10px;
+    scrollbar-width: thin; /* Set scrollbar width for Firefox */
+    scrollbar-color: #00c6ff #1f1f1f; /* Set scrollbar color for Firefox */
+    z-index: 1;
+}
+
+.chat-container::-webkit-scrollbar {
+    width: 8px; /* Set scrollbar width for Chrome, Safari, and Opera */
+}
+
+.chat-container::-webkit-scrollbar-track {
+    background-color: #1f1f1f; /* Set scrollbar track color */
+}
+
+.chat-container::-webkit-scrollbar-thumb {
+    background-color: #00c6ff; /* Set scrollbar thumb color */
+    border-radius: 4px; /* Set scrollbar thumb border radius */
+}
+input[type="text"] {
+    width: 100%;
+    max-width: 600px;
+    padding: 10px;
+    border: 2px solid #00c6ff;
+    border-radius: 22px;
+    font-size: 16px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    background-color: #1f1f1f;
+    color: #fff;
+    animation: slideInLeft 1s ease;
+    box-shadow: 0 0 10px rgba(0, 198, 255, 0.5); 
+    margin: 10px;
+    font-family: 'Orbitron', sans-serif;
+}
+input[type="text"]:focus {
+    border-color: #00a2d1;
+    outline: none;
+    box-shadow: 0 0 15px rgba(0, 198, 255, 0.8);
+}
+button {
+    margin: 10px;
+    justify-self: center;
+    padding: 15px 30px;
+    background-color: #00c6ff;
+    color: #0f0f0f;
+    border: none;
+    border-radius: 22px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+    animation: slideInRight 1s ease;
+    box-shadow: 0 5px 15px rgba(0, 198, 255, 0.5);
+    font-family: 'Orbitron', sans-serif;
+}
+button:hover {
+    background-color: #00a2d1;
+    transform: translateY(-2px);
+}
+.user-message {
+    background-color: #111111;
+    box-shadow: 0 0 10px rgba(0, 198, 255, 0.5);
+    border-radius: 7px; 
+    color: #fff;
+    align-self: flex-end;
+    text-align: right;
+    margin: 5px;
+    padding: 4px; 
+}
+.ai-message {
+    background-color: #111111;
+    box-shadow: 0 0 10px rgba(158, 220, 238, 0.5);
+    border-radius: 7px;
+    color: #fff; 
+    align-self: flex-start;
+    text-align: left;
+    margin: 5px; 
+    padding: 4px;
+}
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+@keyframes slideInLeft {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+@keyframes slideInRight {
+    0% {
+        transform: translateX(100%);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}

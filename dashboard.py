@@ -152,7 +152,7 @@ app.layout = dbc.Container(
     html.Div(style={'grid-column': '3 / 4', 'grid-row': '1 / 3', 'height': '100%', 'display': 'flex', 'flex-direction': 'column'},
     className='box', children=[html.Div(className='plotly-graph', children=[
     html.Div(id="chat-container", className="chat-container"),
-    dcc.Input(id='user-input', type='text', placeholder='Enter your question...', style={'width': '95%'}),
+    dcc.Input(id='user-input', type='text', placeholder='Ex:Give me the total sales for dec 29, 2020', style={'width': '95%'}),
     html.Button('Submit', id='submit-button', n_clicks=0),
     dcc.Store(id='chat-history', data=[])
     ])]),

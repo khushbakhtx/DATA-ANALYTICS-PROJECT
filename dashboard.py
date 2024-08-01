@@ -1,5 +1,5 @@
 import dash
-from dash import Dash, dcc, html, callback, Input, Output, State
+from dash import Dash, dcc, html, callback, Input, Output, State, dash_table
 import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.express as px
@@ -24,12 +24,13 @@ third = get_data('3')
 fourth = get_data('4')
 fifth = get_data('5')
 sixth = get_data('6')
+product_df = pd.read_csv("./source/product.csv")[["ProductName", "Supplier", "ProductCost"]]
+store_df = pd.read_csv("./source/store.csv")
 
-# Load environment variables
+
 load_dotenv()
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
 
-# Initialize database and LLM
 db_uri = "sqlite:///./sqlite.db"
 db = SQLDatabase.from_uri(db_uri)
 llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
@@ -80,31 +81,7 @@ fig_pie.update_layout({'showlegend':False,
 fig_sunburst.update_layout({'showlegend':False,
                            'template':'plotly_dark'})
 
-app = dash.Dash(__name__, title='Khushbakht Shoymardonov')
-
-app.layout = dbc.Container(
-    children=[
-    html.H1("Walmart Sales", style={'text-align': 'center', 'color': 'white'}),
-    html.Div(className="header_component",
-            children=[
-        dcc.Dropdown(
-            id="dropdown_store",
-            options=first['store_name'].unique(),
-            value='HomeGoods', className="dropdown"
-        ),
-        dcc.RangeSlider(
-                id='range_slider',
-                className="range_slider",
-                min=min_year,
-                max=max_year,
-                step=1,
-                allowCross=False,
-                value=[min_year, max_year],
-                marks={str(year): str(year) for year in range(min_year, max_year+1, 1)}
-            ),
-        html.Button('Table', style={'margin-left':'200px'}),
-    ]),
-    html.Div(style={
+main_layout = html.Div(style={
     'display': 'grid',
     'grid-template-columns': 'repeat(3, 1fr)',
     'grid-template-rows': 'repeat(2, 1fr)',
@@ -147,10 +124,68 @@ app.layout = dbc.Container(
         html.P("Khushbakht Shoymardonov", style={'margin-bottom': '20'}),
         html.P("_______________________")
     ])
-]),
+])
+
+app = dash.Dash(__name__, title='Khushbakht Shoymardonov')
+
+app.layout = dbc.Container(
+    children=[
+    html.H1("Walmart Sales", style={'text-align': 'center', 'color': 'white'}),
+    html.Div(className="header_component",
+            children=[
+        dcc.Dropdown(
+            id="dropdown_store",
+            options=first['store_name'].unique(),
+            value='HomeGoods', className="dropdown"
+        ),
+        dcc.RangeSlider(
+                id='range_slider',
+                className="range_slider",
+                min=min_year,
+                max=max_year,
+                step=1,
+                allowCross=False,
+                value=[min_year, max_year],
+                marks={str(year): str(year) for year in range(min_year, max_year+1, 1)}
+            ),
+        html.Button('Home', id="home-button", style={'margin-left':'200px'}),
+        html.Button('Table', id="table-button", style={'margin-left':'10px'}),
+    ]),
+    dcc.Location(id='url', refresh=False),
+    html.Div(id='page-content', children=[main_layout])
 ], fluid=True, style={
 'background-image': 'url("./assets/world-map_2.png")', 'background-attachment': 'fixed',
 'background-repeat': 'no-repeat','display': 'inline-block', 'margin-top':'5px'})
+
+table_layout =  html.Div(style={
+    'padding': '40px',
+    'height': 'calc(100vh - 100px)',
+    'width': '100vw',
+    'justify-content': 'center',
+    'align-items': 'center'
+}, children=[
+html.Div(children=[
+    dash_table.DataTable(
+    product_df.to_dict("records"),
+    [{"name": i, "id": i} for i in product_df.columns],
+    filter_action="native",
+    filter_options={"placeholder_text": "Filter column..."},
+    page_size=10,
+)])])
+
+@app.callback(Output('page-content', 'children'),
+              [Input('home-button', 'n_clicks'),
+               Input('table-button', 'n_clicks')])
+def display_page(home_clicks, table_clicks):
+    ctx = dash.callback_context
+    if not ctx.triggered:
+        return main_layout
+    else:
+        button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+        if button_id == 'home-button':
+            return main_layout
+        elif button_id == 'table-button':
+            return table_layout
 
 @app.callback(
     Output("fig_line", "figure"),

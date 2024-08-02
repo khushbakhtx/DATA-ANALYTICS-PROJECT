@@ -34,11 +34,26 @@ os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
 db_uri = "sqlite:///./sqlite.db"
 db = SQLDatabase.from_uri(db_uri)
 llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
+
 execute_query = QuerySQLDataBaseTool(db=db)
 write_query = create_sql_query_chain(llm, db)
 
 answer_prompt = PromptTemplate.from_template(
-    """Given the following user question, corresponding SQL query, and SQL result, answer the user question.
+    """You are an agent designed to interact with a SQL database.
+    Given an input question, create a syntactically correct SQLite query to run, then look at the results of the query and return the answer.
+    Unless the user specifies a specific number of examples they wish to obtain, always limit your query to at most 5 results.
+    You can order the results by a relevant column to return the most interesting examples in the database.
+    Never query for all the columns from a specific table, only ask for the relevant columns given the question.
+    You have access to tools for interacting with the database.
+    Only use the below tools. Only use the information returned by the below tools to construct your final answer.
+    You MUST double check your query before executing it. If you get an error while executing a query, rewrite the query and try again.
+
+    DO NOT make any DML statements (INSERT, UPDATE, DELETE, DROP etc.) to the database.
+
+    To start you should ALWAYS look at the tables in the database to see what you can query.
+    Do NOT skip this step.
+    Then you should query the schema of the most relevant tables.
+    Given the following user question, corresponding SQL query, and SQL result, answer the user question.
 
 Question: {question}
 SQL Query: {query}
@@ -60,7 +75,7 @@ sixth['sales_date'] = pd.to_datetime(sixth['sales_date'], errors='coerce')
 min_year = third['sales_date'].dt.year.min()
 max_year = third['sales_date'].dt.year.max()
 
-fig_pie = px.pie(data_frame=fourth.head(20), 
+fig_pie = px.pie(data_frame=fourth.sort_values(by='total_sales', ascending=False).head(20), 
                  names='product_name', 
                  values='total_sales', 
                  title='Market Share of Products',
@@ -78,8 +93,12 @@ fig_sunburst = px.sunburst(data_frame=fifth,
 
 fig_pie.update_layout({'showlegend':False,
                            'template':'plotly_dark'})
-fig_sunburst.update_layout({'showlegend':False,
-                           'template':'plotly_dark'})
+fig_sunburst.update_layout(
+        showlegend=False,
+        template='plotly_dark',
+        margin=dict(l=20, r=20, t=50, b=20),
+        autosize=True
+)
 
 main_layout = html.Div(style={
     'display': 'grid',
@@ -250,10 +269,10 @@ def update_plot_bar(selected_store):
         xaxis_tickangle=-45
     )
     fig_scatter.update_layout(
-    showlegend=False,
-    template='plotly_dark',
-    margin=dict(l=20, r=20, t=50, b=20),
-    autosize=True
+        showlegend=False,
+        template='plotly_dark',
+        margin=dict(l=20, r=20, t=50, b=20),
+        autosize=True
     )
     fig_bar.update_layout({'showlegend':False,
                            'template':'plotly_dark'})
@@ -285,8 +304,12 @@ def update_line_chart_3d(selected_range):
                         labels={'sales_date': 'Sales Date', 'store_id': 'Store ID', 'total_quantity_sold': 'Total Quantity Sold'})
     fig_line.update_layout({'showlegend':False,
                            'template':'plotly_dark'})
-    fig_3d.update_layout({'showlegend':False,
-                           'template':'plotly_dark'})
+    fig_3d.update_layout(
+        showlegend=False,
+        template='plotly_dark',
+        margin=dict(l=20, r=20, t=50, b=20),
+        autosize=True
+        )
     
     return fig_line, fig_3d
 

@@ -214,6 +214,10 @@ input[type="text"]:focus {
     outline: none;
     box-shadow: 0 0 15px rgba(0, 198, 255, 0.8);
 }
+.Select input {
+    color:white;
+  }
+  
 button {
     margin: 10px;
     justify-self: center;
@@ -232,6 +236,11 @@ button {
 button:hover {
     background-color: #00a2d1;
     transform: translateY(-2px);
+}
+button:active {
+    background-color: #111111;
+    color: white;
+    box-shadow: 0 5px 15px rgba(254, 255, 255, 0.745);
 }
 .user-message {
     background-color: #111111;

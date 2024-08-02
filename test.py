@@ -24,9 +24,9 @@ third = get_data('3')
 fourth = get_data('4')
 fifth = get_data('5')
 sixth = get_data('6')
-product_df = pd.read_csv("./source/product.csv")[["ProductName", "Supplier", "ProductCost"]]
+product_df = pd.read_csv("./source/product.csv") #[["ProductName", "Supplier", "ProductCost"]]
 store_df = pd.read_csv("./source/store.csv")
-
+data_table_df = pd.merge(product_df, store_df, on="ProductId", how="inner")
 
 load_dotenv()
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
@@ -136,7 +136,7 @@ app.layout = dbc.Container(
         dcc.Dropdown(
             id="dropdown_store",
             options=first['store_name'].unique(),
-            value='HomeGoods', className="dropdown"
+            value=None, className="dropdown"
         ),
         dcc.RangeSlider(
                 id='range_slider',
@@ -166,16 +166,43 @@ table_layout =  html.Div(style={
 }, children=[
 html.Div(children=[
     dash_table.DataTable(
-    product_df.to_dict("records"),
-    [{"name": i, "id": i} for i in product_df.columns],
-    filter_action="native",
-    filter_options={"placeholder_text": "Filter column..."},
-    page_size=10,
-)])])
+        data_table_df.to_dict("records"),
+        [{"name": i, "id": i} for i in data_table_df.columns],
+        filter_action="native",
+        filter_options={"placeholder_text": "Filter column..."},
+        page_size=15,
+        style_cell={
+                    'backgroundColor': 'rgba(254, 255, 255, 0.245)',
+                    'color': '#fff',
+                    'padding': '5px',
+                    'border': '1px solid #444'
+        },
+        style_header={
+                    'backgroundColor': '#444',
+                    'color': 'white',
+                    'fontWeight': 'bold',
+                    'border': '1px solid #444'
+        },
+        style_filter={
+                    'backgroundColor': 'rgba(254, 255, 255, 0.545)',
+                    'color': '#fff',
+                    'fontWeight': 'bold',
+                    'border': '1px solid #444'
+        },
+        style_table={
+                    'overflowY': 'auto',
+                    'height': '400px',
+                    'border': '1px solid #444',
+                    'border-radius': '20px',
+        }
+)
+])])
+
 
 @app.callback(Output('page-content', 'children'),
               [Input('home-button', 'n_clicks'),
                Input('table-button', 'n_clicks')])
+
 def display_page(home_clicks, table_clicks):
     ctx = dash.callback_context
     if not ctx.triggered:
@@ -187,36 +214,7 @@ def display_page(home_clicks, table_clicks):
         elif button_id == 'table-button':
             return table_layout
 
-@app.callback(
-    Output("fig_line", "figure"),
-    Output("fig_3d", "figure"),
-    Input("range_slider", "value")
-)
-def update_line_chart_3d(selected_range):
-    min_year, max_year = selected_range
-    filtered_data = third[(third['sales_date'].dt.year >= min_year) & (third['sales_date'].dt.year <= max_year)]
-    filtered_data_3d = sixth[(sixth['sales_date'].dt.year >= min_year) & (sixth['sales_date'].dt.year <= max_year)]
-    fig_line = px.line(data_frame=filtered_data, 
-                   x='sales_date', 
-                   y='total_sales', 
-                   height=400,
-                   title='Sales Trends Over Time',
-                   labels={'sales_date': 'Sales Date', 'total_sales': 'Total Sales'})
-    fig_line.update_layout({'showlegend':False,
-                           'template':'plotly_dark'})
-    fig_3d = px.scatter_3d(data_frame=filtered_data_3d, 
-                        x='sales_date', 
-                        y='store_id', 
-                        z='total_quantity_sold', 
-                        color='product_name', 
-                        title='Sales Analysis by Store, Product, and Date',
-                        height=400,
-                        width=550,
-                        labels={'sales_date': 'Sales Date', 'store_id': 'Store ID', 'total_quantity_sold': 'Total Quantity Sold'})
-    fig_3d.update_layout({'showlegend':False,
-                           'template':'plotly_dark'})
-    
-    return fig_line, fig_3d
+
 
 @app.callback(
     Output("fig_scatter", "figure"),
@@ -224,8 +222,12 @@ def update_line_chart_3d(selected_range):
     Input("dropdown_store", "value")
 )
 def update_plot_bar(selected_store):
-    filtered_store_scatter = first[first['store_name']==selected_store]
-    filtered_store_bar = second[second['store_name']==selected_store]
+    if selected_store is None:
+        filtered_store_scatter=first
+        filtered_store_bar=second
+    else:
+        filtered_store_scatter = first[first['store_name']==selected_store]
+        filtered_store_bar = second[second['store_name']==selected_store]
     fig_scatter = px.scatter(data_frame=filtered_store_scatter, 
                             x='unit_price', 
                             y='total_quantity_sold', 
@@ -256,6 +258,37 @@ def update_plot_bar(selected_store):
     fig_bar.update_layout({'showlegend':False,
                            'template':'plotly_dark'})
     return fig_scatter, fig_bar
+
+@app.callback(
+    Output("fig_line", "figure"),
+    Output("fig_3d", "figure"),
+    Input("range_slider", "value")
+)
+def update_line_chart_3d(selected_range):
+    min_year, max_year = selected_range
+    filtered_data = third[(third['sales_date'].dt.year >= min_year) & (third['sales_date'].dt.year <= max_year)]
+    filtered_data_3d = sixth[(sixth['sales_date'].dt.year >= min_year) & (sixth['sales_date'].dt.year <= max_year)]
+    fig_line = px.line(data_frame=filtered_data, 
+                   x='sales_date', 
+                   y='total_sales', 
+                   height=400,
+                   title='Sales Trends Over Time',
+                   labels={'sales_date': 'Sales Date', 'total_sales': 'Total Sales'})
+    fig_3d = px.scatter_3d(data_frame=filtered_data_3d, 
+                        x='sales_date', 
+                        y='store_id', 
+                        z='total_quantity_sold', 
+                        color='product_name', 
+                        title='Sales Analysis by Store, Product, and Date',
+                        height=400,
+                        width=550,
+                        labels={'sales_date': 'Sales Date', 'store_id': 'Store ID', 'total_quantity_sold': 'Total Quantity Sold'})
+    fig_line.update_layout({'showlegend':False,
+                           'template':'plotly_dark'})
+    fig_3d.update_layout({'showlegend':False,
+                           'template':'plotly_dark'})
+    
+    return fig_line, fig_3d
 
 @app.callback(
     Output('chat-container', 'children'),

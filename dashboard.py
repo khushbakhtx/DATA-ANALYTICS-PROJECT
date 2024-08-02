@@ -146,6 +146,7 @@ main_layout = html.Div(style={
 ])
 
 app = dash.Dash(__name__, title='Khushbakht Shoymardonov')
+server = app.server
 
 app.layout = dbc.Container(
     children=[

@@ -23,5 +23,41 @@ The Walmart Sales Data Analytics Project serves as a powerful tool for data-driv
 
 ## Used tools
 
-- **Plotly and Dash**: for creating interactive visualization of data
-- **SQL**: for queries
+- **Python**: using Pandas
+- **Plotly and Dash**: for creating interactive visualization of Walmart data
+- **SQL**: for database creation, queries, and scripting.
+- **Cascading Style Sheets**: for styling.
+- **Git**: for version control.
+- **Langchain Framework**: for chatbot agent creation with OpenAI API. 
+
+/Walmart-Sales-Data-Analytics
+│
+├── assets/ # Directory for storing styles.css
+│
+├── queries/ # Directory for SQL queries and scripts used in data analysis
+│
+├── source/ # Directory for source code .csv files
+│
+├── .gitignore # Git ignore file to exclude specified files and directories from version control
+│
+├── .langchain_cache.db # Database file for LangChain caching
+│
+├── README.md # Project documentation and overview
+│
+├── connector.py # Script for connecting to the database
+│
+├── credentials.txt # File containing sensitive credentials (private)
+│
+├── dashboard.py # Script for creating and managing dashboards
+│
+├── ddl.py # Data Definition Language script for database creation and transformation to my.db
+│
+├── etl.py # Extract, Transform, Load script for data processing
+│
+├── my.db # DuckDB database
+│
+├── requirements.txt # File listing project dependencies and libraries
+│
+├── sqlite.db # SQLite database for Database AI Agent
+│
+└── test.py # Script for testing functionalities and ensuring code quality

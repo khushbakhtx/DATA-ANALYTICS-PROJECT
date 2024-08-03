@@ -1,6 +1,6 @@
 # Walmart Sales Data Analytics Project
 
-[Link](https://walmart-data-analytics.onrender.com/)
+[Walmart-Sales-Dashboard](https://walmart-data-analytics.onrender.com/)
 
 ## Overview
 

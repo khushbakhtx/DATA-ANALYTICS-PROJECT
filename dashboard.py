@@ -6,17 +6,17 @@ import plotly.express as px
 from etl import get_data
 from datetime import datetime as dtime
 #-------------------------
-import os
-from dash.exceptions import PreventUpdate
-from langchain_community.utilities import SQLDatabase
-from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI
-from langchain.chains import create_sql_query_chain
-from langchain_community.tools.sql_database.tool import QuerySQLDataBaseTool
-from operator import itemgetter
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import PromptTemplate
-from langchain_core.runnables import RunnablePassthrough
+# import os
+# from dash.exceptions import PreventUpdate
+# from langchain_community.utilities import SQLDatabase
+# from dotenv import load_dotenv
+# from langchain_openai import ChatOpenAI
+# from langchain.chains import create_sql_query_chain
+# from langchain_community.tools.sql_database.tool import QuerySQLDataBaseTool
+# from operator import itemgetter
+# from langchain_core.output_parsers import StrOutputParser
+# from langchain_core.prompts import PromptTemplate
+# from langchain_core.runnables import RunnablePassthrough
 
 #------------------------импортируем запросы полученные через вьюшки и тп----
 
@@ -31,34 +31,34 @@ store_df = pd.read_csv("./source/store.csv")
 data_table_df = pd.merge(product_df, store_df, on="ProductId", how="inner")
 
 # ------------------------------ создание ai-db-agent-------------------------------
-load_dotenv()
-os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
+# load_dotenv()
+# os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
 
-db_uri = "sqlite:///./sqlite.db"
-db = SQLDatabase.from_uri(db_uri)
-llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
+# db_uri = "sqlite:///./sqlite.db"
+# db = SQLDatabase.from_uri(db_uri)
+# llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
 
-execute_query = QuerySQLDataBaseTool(db=db)
-write_query = create_sql_query_chain(llm, db)
+# execute_query = QuerySQLDataBaseTool(db=db)
+# write_query = create_sql_query_chain(llm, db)
 
-answer_prompt = PromptTemplate.from_template(
-    """
-    Given the following user question, corresponding SQL query, and SQL result, answer the user question.
+# answer_prompt = PromptTemplate.from_template(
+#     """
+#     Given the following user question, corresponding SQL query, and SQL result, answer the user question.
 
-Question: {question}
-SQL Query: {query}
-SQL Result: {result}
-Answer: """
-)
+# Question: {question}
+# SQL Query: {query}
+# SQL Result: {result}
+# Answer: """
+# )
 
-chain = (
-    RunnablePassthrough.assign(query=write_query).assign(
-        result=itemgetter("query") | execute_query
-    )
-    | answer_prompt
-    | llm
-    | StrOutputParser()
-)
+# chain = (
+#     RunnablePassthrough.assign(query=write_query).assign(
+#         result=itemgetter("query") | execute_query
+#     )
+#     | answer_prompt
+#     | llm
+#     | StrOutputParser()
+# )
 
 #------------------
 
@@ -124,9 +124,9 @@ main_layout = html.Div(style={
         html.Div(id="chat-container", className="chat-container", children=[
             html.H1("AI DataBase Agent.\n Coming Soon!", style={'color': '#fff'})
         ]),
-        dcc.Input(id='user-input', type='text', placeholder='Ex:Give me the total sales for dec 29, 2020', style={'width': '95%'}),
-        html.Button('Submit', id='submit-button', n_clicks=0),
-        dcc.Store(id='chat-history', data=[])
+        # dcc.Input(id='user-input', type='text', placeholder='Ex:Give me the total sales for dec 29, 2020', style={'width': '95%'}),
+        # html.Button('Submit', id='submit-button', n_clicks=0),
+        # dcc.Store(id='chat-history', data=[])
     ])]),
 
     html.Div(style={'grid-column': '1 / 3', 'grid-row': '2 / 3'}, children=[
@@ -341,28 +341,28 @@ def update_line_chart_3d(selected_range):
 
 # database ai agent callback для взаимодействия с элементами управления итп.
 
-@app.callback(
-    Output('chat-container', 'children'),
-    Output('chat-history', 'data'),
-    Input('submit-button', 'n_clicks'),
-    Input('user-input', 'value'),
-    State('chat-history', 'data')
-)
-def update_chat(n_clicks, user_input, chat_history):
-    if n_clicks > 0 and user_input:
+# @app.callback(
+#     Output('chat-container', 'children'),
+#     Output('chat-history', 'data'),
+#     Input('submit-button', 'n_clicks'),
+#     Input('user-input', 'value'),
+#     State('chat-history', 'data')
+# )
+# def update_chat(n_clicks, user_input, chat_history):
+#     if n_clicks > 0 and user_input:
       
-        result = chain.invoke({"question": user_input})
+#         result = chain.invoke({"question": user_input})
        
-        chat_history.append({'question': user_input, 'answer': result})
+#         chat_history.append({'question': user_input, 'answer': result})
        
-        messages = []
-        for entry in chat_history:
-            messages.append(html.Div(f"{entry['question']}",className="user-message"))
-            messages.append(html.Div(f"{entry['answer']}", className="ai-message"))
+#         messages = []
+#         for entry in chat_history:
+#             messages.append(html.Div(f"{entry['question']}",className="user-message"))
+#             messages.append(html.Div(f"{entry['answer']}", className="ai-message"))
 
-        return messages, chat_history
+#         return messages, chat_history
 
-    raise PreventUpdate
+#     raise PreventUpdate
 
 if __name__ == '__main__':
     app.run_server(debug=True)

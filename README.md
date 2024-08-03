@@ -30,9 +30,9 @@ The Walmart Sales Data Analytics Project serves as a powerful tool for data-driv
 - **Git**: for version control.
 - **Langchain Framework**: for chatbot agent creation with OpenAI API. 
 
-/Walmart-Sales-Data-Analytics
-│
-├── assets/ # Directory for storing styles.css
+/Walmart-Sales-Data-Analytics<br>
+│<br>
+├── assets/ # Directory for storing styles.css<br>
 │
 ├── queries/ # Directory for SQL queries and scripts used in data analysis
 │

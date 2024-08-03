@@ -24,7 +24,7 @@ third = get_data('3')
 fourth = get_data('4')
 fifth = get_data('5')
 sixth = get_data('6')
-product_df = pd.read_csv("./source/product.csv") #[["ProductName", "Supplier", "ProductCost"]]
+product_df = pd.read_csv("./source/product.csv")
 store_df = pd.read_csv("./source/store.csv")
 data_table_df = pd.merge(product_df, store_df, on="ProductId", how="inner")
 
@@ -39,20 +39,7 @@ execute_query = QuerySQLDataBaseTool(db=db)
 write_query = create_sql_query_chain(llm, db)
 
 answer_prompt = PromptTemplate.from_template(
-    """You are an agent designed to interact with a SQL database.
-    Given an input question, create a syntactically correct SQLite query to run, then look at the results of the query and return the answer.
-    Unless the user specifies a specific number of examples they wish to obtain, always limit your query to at most 5 results.
-    You can order the results by a relevant column to return the most interesting examples in the database.
-    Never query for all the columns from a specific table, only ask for the relevant columns given the question.
-    You have access to tools for interacting with the database.
-    Only use the below tools. Only use the information returned by the below tools to construct your final answer.
-    You MUST double check your query before executing it. If you get an error while executing a query, rewrite the query and try again.
-
-    DO NOT make any DML statements (INSERT, UPDATE, DELETE, DROP etc.) to the database.
-
-    To start you should ALWAYS look at the tables in the database to see what you can query.
-    Do NOT skip this step.
-    Then you should query the schema of the most relevant tables.
+    """
     Given the following user question, corresponding SQL query, and SQL result, answer the user question.
 
 Question: {question}

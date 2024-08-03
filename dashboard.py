@@ -18,16 +18,19 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 
+#------------------------импортируем запросы полученные через вьюшки и тп----
+
 first = get_data('1')
 second = get_data('2')
 third = get_data('3')
 fourth = get_data('4')
 fifth = get_data('5')
 sixth = get_data('6')
-product_df = pd.read_csv("./source/product.csv") #[["ProductName", "Supplier", "ProductCost"]]
+product_df = pd.read_csv("./source/product.csv")
 store_df = pd.read_csv("./source/store.csv")
 data_table_df = pd.merge(product_df, store_df, on="ProductId", how="inner")
 
+# ------------------------------ создание ai-db-agent-------------------------------
 load_dotenv()
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
 
@@ -39,20 +42,7 @@ execute_query = QuerySQLDataBaseTool(db=db)
 write_query = create_sql_query_chain(llm, db)
 
 answer_prompt = PromptTemplate.from_template(
-    """You are an agent designed to interact with a SQL database.
-    Given an input question, create a syntactically correct SQLite query to run, then look at the results of the query and return the answer.
-    Unless the user specifies a specific number of examples they wish to obtain, always limit your query to at most 5 results.
-    You can order the results by a relevant column to return the most interesting examples in the database.
-    Never query for all the columns from a specific table, only ask for the relevant columns given the question.
-    You have access to tools for interacting with the database.
-    Only use the below tools. Only use the information returned by the below tools to construct your final answer.
-    You MUST double check your query before executing it. If you get an error while executing a query, rewrite the query and try again.
-
-    DO NOT make any DML statements (INSERT, UPDATE, DELETE, DROP etc.) to the database.
-
-    To start you should ALWAYS look at the tables in the database to see what you can query.
-    Do NOT skip this step.
-    Then you should query the schema of the most relevant tables.
+    """
     Given the following user question, corresponding SQL query, and SQL result, answer the user question.
 
 Question: {question}
@@ -69,8 +59,14 @@ chain = (
     | llm
     | StrOutputParser()
 )
+
+#------------------
+
+
 third['sales_date'] = pd.to_datetime(third['sales_date'], errors='coerce')
 sixth['sales_date'] = pd.to_datetime(sixth['sales_date'], errors='coerce')
+
+
 
 min_year = third['sales_date'].dt.year.min()
 max_year = third['sales_date'].dt.year.max()
@@ -100,6 +96,7 @@ fig_sunburst.update_layout(
         autosize=True
 )
 
+#----------------------------------- главная (лицевая) страница дашборда -------------
 main_layout = html.Div(style={
     'display': 'grid',
     'grid-template-columns': 'repeat(3, 1fr)',
@@ -111,46 +108,62 @@ main_layout = html.Div(style={
     'justify-content': 'center',
     'align-items': 'center'
 }, children=[
-        html.Div(style={'grid-column': '1 / 2', 'grid-row': '1 / 2'}
+
+    html.Div(style={'grid-column': '1 / 2', 'grid-row': '1 / 2'}
                  , className="plotly-graphx",  children=[
         dcc.Graph(id="fig_scatter", style={'border-radius': 15})
     ]),
+
     html.Div(style={'grid-column': '2 / 3', 'grid-row': '1 / 2'}, className="plotly-graphx",
               children=[
         dcc.Graph(id="fig_bar")
     ]),
+
     html.Div(style={'grid-column': '3 / 4', 'grid-row': '1 / 3', 'height': '100%', 'display': 'flex', 'flex-direction': 'column'},
     className='box', children=[html.Div(className='plotly-graph', children=[
-    html.Div(id="chat-container", className="chat-container"),
-    dcc.Input(id='user-input', type='text', placeholder='Ex:Give me the total sales for dec 29, 2020', style={'width': '95%'}),
-    html.Button('Submit', id='submit-button', n_clicks=0),
-    dcc.Store(id='chat-history', data=[])
+        html.Div(id="chat-container", className="chat-container", children=[
+            html.H1("AI DataBase Agent.\n Coming Soon!", style={'color': '#fff'})
+        ]),
+        dcc.Input(id='user-input', type='text', placeholder='Ex:Give me the total sales for dec 29, 2020', style={'width': '95%'}),
+        html.Button('Submit', id='submit-button', n_clicks=0),
+        dcc.Store(id='chat-history', data=[])
     ])]),
+
     html.Div(style={'grid-column': '1 / 3', 'grid-row': '2 / 3'}, children=[
         dcc.Graph(id="fig_line"),
     ], className="plotly-graphx"),
+
     html.Div(style={'grid-column': '1 / 2', 'grid-row': '3 / 4'}, children=[
         dcc.Graph(figure=fig_pie)
     ], className="plotly-graphx"),
+
     html.Div(style={'grid-column': '2 / 3', 'grid-row': '3 / 4'}, children=[
         dcc.Graph(id="fig_3d")
     ], className="plotly-graphx"),
+
     html.Div(style={'grid-column': '3 / 4', 'grid-row': '3 / 4'}, children=[
         dcc.Graph(figure=fig_sunburst)
     ], className="plotly-graphx"),
+
     html.Div(style={'grid-column': '2 / 3', 'grid-row': '4 / 5'}, className='footer', children=[
-        html.P("Built by AI Enthusiast", style={'margin': '0'}),
+        html.P("Built by AI Enthusiast  ", style={'margin': '0'}),
         html.P("Khushbakht Shoymardonov", style={'margin-bottom': '20'}),
         html.P("_______________________")
     ])
 ])
 
+
 app = dash.Dash(__name__, title='Khushbakht Shoymardonov')
 server = app.server
 
+
 app.layout = dbc.Container(
     children=[
+
     html.H1("Walmart Sales", style={'text-align': 'center', 'color': 'white'}),
+
+#------------компоненты управления графиками --------------
+
     html.Div(className="header_component",
             children=[
         dcc.Dropdown(
@@ -158,6 +171,7 @@ app.layout = dbc.Container(
             options=first['store_name'].unique(),
             value=None, className="dropdown"
         ),
+
         dcc.RangeSlider(
                 id='range_slider',
                 className="range_slider",
@@ -171,11 +185,16 @@ app.layout = dbc.Container(
         html.Button('Home', id="home-button", style={'margin-left':'200px'}),
         html.Button('Table', id="table-button", style={'margin-left':'10px'}),
     ]),
+#---------------- переход по страницам, по умолчанию main_layout
+
     dcc.Location(id='url', refresh=False),
     html.Div(id='page-content', children=[main_layout])
+
 ], fluid=True, style={
 'background-image': 'url("./assets/world-map_2.png")', 'background-attachment': 'fixed',
 'background-repeat': 'no-repeat','display': 'inline-block', 'margin-top':'5px'})
+
+#--------------------------------- вторая страница с фильтруемой таблицей
 
 table_layout =  html.Div(style={
     'padding': '40px',
@@ -184,7 +203,9 @@ table_layout =  html.Div(style={
     'justify-content': 'center',
     'align-items': 'center'
 }, children=[
+
 html.Div(children=[
+
     dash_table.DataTable(
         data_table_df.to_dict("records"),
         [{"name": i, "id": i} for i in data_table_df.columns],
@@ -218,6 +239,7 @@ html.Div(children=[
 )
 ])])
 
+#-------------- вызов страницы 'home' либо 'table'
 
 @app.callback(Output('page-content', 'children'),
               [Input('home-button', 'n_clicks'),
@@ -235,6 +257,7 @@ def display_page(home_clicks, table_clicks):
             return table_layout
 
 
+# callback dropdown который фильтрирует scatter plot and bar chart по продажам в определенных магазинах
 
 @app.callback(
     Output("fig_scatter", "figure"),
@@ -279,6 +302,8 @@ def update_plot_bar(selected_store):
                            'template':'plotly_dark'})
     return fig_scatter, fig_bar
 
+# callback RangeSlider определяет интервал продаж в line chart and 3d scatter plot.
+
 @app.callback(
     Output("fig_line", "figure"),
     Output("fig_3d", "figure"),
@@ -313,6 +338,8 @@ def update_line_chart_3d(selected_range):
         )
     
     return fig_line, fig_3d
+
+# database ai agent callback для взаимодействия с элементами управления итп.
 
 @app.callback(
     Output('chat-container', 'children'),

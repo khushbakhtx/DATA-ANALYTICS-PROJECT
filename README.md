@@ -2,6 +2,8 @@
 
 [Walmart-Sales-Dashboard](https://walmart-data-analytics.onrender.com/)
 
+![Uploading 2024-08-05_13-00-02.png…]()
+
 ## Overview
 
 I created a data analytics project focused on Walmart sales data to gain valuable insights and drive strategic decision-making for the company. The primary objectives of this project were to identify high-performing branches and products, analyze sales patterns of various products, and understand customer behavior and preferences. By leveraging the power of data analysis, this project aimed to enhance Walmart's sales strategies and optimize overall performance.

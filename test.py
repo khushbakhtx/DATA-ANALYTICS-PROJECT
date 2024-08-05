@@ -62,10 +62,10 @@ sixth['sales_date'] = pd.to_datetime(sixth['sales_date'], errors='coerce')
 min_year = third['sales_date'].dt.year.min()
 max_year = third['sales_date'].dt.year.max()
 
-fig_pie = px.pie(data_frame=fourth.sort_values(by='total_sales', ascending=False).head(20), 
+fig_pie = px.pie(data_frame=fourth.sort_values(by='total_sales', ascending=False).head(10), 
                  names='product_name', 
                  values='total_sales', 
-                 title='Market Share of Products',
+                 title='Market Share of Top 10 Products',
                  hole=0.3,
                  height=400,
                  width=420)
@@ -125,7 +125,10 @@ main_layout = html.Div(style={
     html.Div(style={'grid-column': '3 / 4', 'grid-row': '3 / 4'}, children=[
         dcc.Graph(figure=fig_sunburst)
     ], className="plotly-graphx"),
-    html.Div(style={'grid-column': '2 / 3', 'grid-row': '4 / 5'}, className='footer', children=[
+        html.Div(style={'grid-column': '1 / 4', 'grid-row': '4 / 5'}, children=[
+        dcc.Graph(id="fig_multi-line")
+    ], className="plotly-graphx"),
+    html.Div(style={'grid-column': '2 / 3', 'grid-row': '5 / 6'}, className='footer', children=[
         html.P("Built by AI Enthusiast", style={'margin': '0'}),
         html.P("Khushbakht Shoymardonov", style={'margin-bottom': '20'}),
         html.P("_______________________")
@@ -268,19 +271,27 @@ def update_plot_bar(selected_store):
 @app.callback(
     Output("fig_line", "figure"),
     Output("fig_3d", "figure"),
+    Output("fig_multi-line", "figure"),
     Input("range_slider", "value")
 )
 def update_line_chart_3d(selected_range):
     min_year, max_year = selected_range
     filtered_data = third[(third['sales_date'].dt.year >= min_year) & (third['sales_date'].dt.year <= max_year)]
     filtered_data_3d = sixth[(sixth['sales_date'].dt.year >= min_year) & (sixth['sales_date'].dt.year <= max_year)]
-    fig_line = px.line(data_frame=filtered_data, 
-                   x='sales_date', 
-                   y='total_sales', 
-                   height=400,
-                   title='Sales Trends Over Time',
-                   labels={'sales_date': 'Sales Date', 'total_sales': 'Total Sales'})
-    fig_3d = px.scatter_3d(data_frame=filtered_data_3d, 
+
+    top_products = filtered_data_3d.sort_values('total_quantity_sold', ascending=False).head(3)['product_name'].unique()
+    filtered_multi_ten = filtered_data_3d[filtered_data_3d['product_name'].isin(top_products)] 
+
+    fig_line = px.line(
+                        data_frame=filtered_data, 
+                        x='sales_date', 
+                        y='total_sales', 
+                        height=400,
+                        title='Sales Trends Over Time',
+                        labels={'sales_date': 'Sales Date', 'total_sales': 'Total Sales'}
+                        )
+    fig_3d = px.scatter_3d(
+                        data_frame=filtered_data_3d, 
                         x='sales_date', 
                         y='store_id', 
                         z='total_quantity_sold', 
@@ -289,16 +300,31 @@ def update_line_chart_3d(selected_range):
                         height=400,
                         width=550,
                         labels={'sales_date': 'Sales Date', 'store_id': 'Store ID', 'total_quantity_sold': 'Total Quantity Sold'})
+
+    fig_multi_line = px.line(
+                        data_frame=filtered_multi_ten,
+                        x='sales_date',
+                        y='total_quantity_sold',
+                        color='product_name',
+                        title='Sales Trend Over Time by Top 3 Products',
+                        labels={'sales_date': 'Sales Date', 'total_quantity_sold': 'Total Quantity Sold'}
+                        )
+    
+    fig_multi_line.update_layout(
+                        showlegend=False,
+                        template='plotly_dark'
+        )
+    
     fig_line.update_layout({'showlegend':False,
                            'template':'plotly_dark'})
     fig_3d.update_layout(
-        showlegend=False,
-        template='plotly_dark',
-        margin=dict(l=20, r=20, t=50, b=20),
-        autosize=True
+                        showlegend=False,
+                        template='plotly_dark',
+                        margin=dict(l=20, r=20, t=50, b=20),
+                        autosize=True
         )
     
-    return fig_line, fig_3d
+    return fig_line, fig_3d, fig_multi_line
 
 @app.callback(
     Output('chat-container', 'children'),

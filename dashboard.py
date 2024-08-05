@@ -148,7 +148,7 @@ main_layout = html.Div(style={
         dcc.Graph(id="fig_multi-line")
     ], className="plotly-graphx"),
     html.Div(style={'grid-column': '2 / 3', 'grid-row': '5 / 6'}, className='footer', children=[
-        html.P("Built by AI Enthusiast  ", style={'margin': '0'}),
+        html.P("_______________________", style={'margin': '0'}),
         html.P("Khushbakht Shoymardonov", style={'margin-bottom': '20'}),
         html.P("_______________________")
     ])

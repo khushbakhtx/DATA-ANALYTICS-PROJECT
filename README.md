@@ -2,7 +2,7 @@
 
 [Walmart-Sales-Dashboard](https://walmart-data-analytics.onrender.com/)
 
-![Uploading 2024-08-05_13-00-02.png…]()
+![2024-08-05_13-00-02](https://github.com/user-attachments/assets/438bf543-aff5-434c-afc3-35c497294524)
 
 ## Overview
 

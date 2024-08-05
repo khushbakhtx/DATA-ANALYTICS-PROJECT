@@ -4,6 +4,8 @@
 
 ![2024-08-05_13-00-02](https://github.com/user-attachments/assets/438bf543-aff5-434c-afc3-35c497294524)
 
+![2024-08-05_13-05-52](https://github.com/user-attachments/assets/f223e45e-06b9-4ec4-9678-dea77248542f)
+
 ## Overview
 
 I created a data analytics project focused on Walmart sales data to gain valuable insights and drive strategic decision-making for the company. The primary objectives of this project were to identify high-performing branches and products, analyze sales patterns of various products, and understand customer behavior and preferences. By leveraging the power of data analysis, this project aimed to enhance Walmart's sales strategies and optimize overall performance.

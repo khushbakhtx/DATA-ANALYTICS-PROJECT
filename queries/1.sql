@@ -8,8 +8,7 @@ select
     st.store_name
 from 
     sales s
-join
-    product p on s.product_id = p.product_id
+join product p on s.product_id = p.product_id
 inner join store st on s.product_id = st.product_id
 group by 
     p.product_id, p.product_name, s.unit_price, st.store_name;

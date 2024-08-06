@@ -1,6 +1,6 @@
 # Walmart Sales Data Analytics Project
 
-[Walmart-Sales-Dashboard](https://walmart-data-analytics.onrender.com/)
+[Walmart-Sales-Dashboard](https://walmart-data-analytics.onrender.com)
 
 ![2024-08-05_13-00-02](https://github.com/user-attachments/assets/438bf543-aff5-434c-afc3-35c497294524)
 

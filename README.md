@@ -2,8 +2,6 @@
 
 [Walmart-Sales-Dashboard Deployed (Render)](https://walmart-data-analytics.onrender.com)
 
-[Walmart-Sales-Dashboard Deployed (Azure App Service)](https://walmart-sales-arahgfd7d2f5hkds.eastus-01.azurewebsites.net/)
-
 ![2024-08-05_13-00-02](https://github.com/user-attachments/assets/438bf543-aff5-434c-afc3-35c497294524)
 
 ![2024-08-05_13-05-52](https://github.com/user-attachments/assets/f223e45e-06b9-4ec4-9678-dea77248542f)
